@@ -1,0 +1,17 @@
+.session-chart-container {
+  background-color: #ff0000;
+  border-radius: 5px;
+  position: relative;
+  height: 263px;
+}
+
+.session-title {
+  position: absolute;
+  top: 29px;
+  left: 34px;
+  color: rgba(255, 255,255, 0.5);
+  font-size: 15px;
+  font-weight: 500;
+  max-width: 147px;
+  z-index: 1;
+}

@@ -1,0 +1,18 @@
+.custom-tooltip {
+  background-color: #e60000;
+  color: #ffffff;
+  width: 60px;
+  height: 90px;
+  padding: 10px;
+  border: none;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: column;
+}
+
+.custom-tooltip .tooltip-line {
+  font-size: 12px;
+  line-height: 24px;
+  margin: 0;
+}

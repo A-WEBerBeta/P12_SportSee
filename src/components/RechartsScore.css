@@ -1,0 +1,38 @@
+.score-chart-container {
+  position: relative;
+  background-color: #fbfbfb;
+  border-radius: 5px;
+  height: 263px;
+  width: 100%;
+}
+
+.score-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: #20253A;
+  position: absolute;
+  top: 20px;
+  left: 30px;
+}
+
+
+.score-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.score-center .score-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: #282D30;
+  margin-bottom: 4px;
+}
+
+.score-center .score-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: #74798c;
+}
