@@ -1,9 +1,9 @@
 .tooltip-average {
-  width: 39px;
-  height: 25px;
+  width: 50px;
+  height: 32px;
   background-color: white;
   color: black;
-  font-size: 8px;
+  font-size: 11px;
   padding: 7px;
   display: flex;
   align-items: center;

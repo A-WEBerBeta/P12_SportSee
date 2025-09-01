@@ -13,20 +13,15 @@ import CustomTooltipActivity from "./CustomTooltipActivity.jsx";
 import { useEffect, useState } from "react";
 import "./RechartsActivity.css";
 
-export default function RechartsActivity() {
+export default function RechartsActivity({ userId }) {
   const [activityData, setActivityData] = useState(null);
 
   useEffect(() => {
-    const userActivityService1 = new UserActivityService(
-      import.meta.env.VITE_USER_ID
-    );
-    // const userActivityService2 = new UserActivityService(18)
+    const userActivityService1 = new UserActivityService(userId);
     userActivityService1.getData().then((activityData_) => {
-      // setTimeout(() => {
-      // }, 3000);
       setActivityData(activityData_);
     });
-  }, []);
+  }, [userId]);
 
   return (
     <>
@@ -80,7 +75,7 @@ export default function RechartsActivity() {
                 content={<CustomTooltipActivity />}
                 offset={20}
                 wrapperStyle={{ marginTop: -20 }}
-                cursor={{ fill: "rgba(196, 196, 196, 0.5", width: 56 }}
+                cursor={{ fill: "rgba(196, 196, 196, 0.5)" }}
               />
               <Bar
                 dataKey="kilogram"

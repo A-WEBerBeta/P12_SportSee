@@ -1,20 +1,23 @@
-import { RadialBar, RadialBarChart, ResponsiveContainer } from "recharts";
+import {
+  PolarAngleAxis,
+  RadialBar,
+  RadialBarChart,
+  ResponsiveContainer,
+} from "recharts";
 
 import { useEffect, useState } from "react";
 import UserScoreService from "../services/userScoreService";
 import "./RechartsScore.css";
 
-export default function RechartsScore() {
+export default function RechartsScore({ userId }) {
   const [scoreData, setScoreData] = useState(null);
 
   useEffect(() => {
-    const userScoreService1 = new UserScoreService(
-      import.meta.env.VITE_USER_ID
-    );
+    const userScoreService1 = new UserScoreService(userId);
     userScoreService1.getData().then((scoreData_) => {
       setScoreData(scoreData_);
     });
-  }, []);
+  }, [userId]);
 
   const percent = scoreData?.[0]?.value ?? 0;
 
@@ -35,6 +38,7 @@ export default function RechartsScore() {
               endAngle={450}
               data={scoreData}
             >
+              <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
               <RadialBar
                 background={{ fill: "#FBFBFB" }}
                 dataKey="value"

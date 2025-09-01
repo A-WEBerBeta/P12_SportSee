@@ -29,10 +29,7 @@ class UserScoreService {
 
     const percent = Math.round(score * 100);
 
-    return [
-      { name: "score", value: percent, fill: "#FF0000" },
-      { name: "rest", value: 100 - percent, fill: "#FBFBFB" },
-    ];
+    return [{ name: "score", value: percent, fill: "#FF0000" }];
   }
 }
 

@@ -12,17 +12,15 @@ import CustomCursorAverage from "./CustomCursorAverage.jsx";
 import CustomTooltipAverage from "./CustomTooltipAverage.jsx";
 import "./RechartsAverageSessions.css";
 
-export default function RechartsAverageSessions() {
+export default function RechartsAverageSessions({ userId }) {
   const [averageSessionsData, setAverageSessionsData] = useState(null);
 
   useEffect(() => {
-    const userAverageSessionsService1 = new UserAverageSessionsService(
-      import.meta.env.VITE_USER_ID
-    );
+    const userAverageSessionsService1 = new UserAverageSessionsService(userId);
     userAverageSessionsService1.getData().then((averageSessionsData_) => {
       setAverageSessionsData(averageSessionsData_);
     });
-  }, []);
+  }, [userId]);
 
   return (
     <>

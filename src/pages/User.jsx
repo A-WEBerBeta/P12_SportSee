@@ -15,6 +15,7 @@ import "./User.css";
 
 export default function User() {
   const { id } = useParams();
+  const userId = Number(id);
   const user = userMainData.find((user) => user.id == id) ?? null;
 
   if (!user) {
@@ -62,16 +63,19 @@ export default function User() {
 
           <div className="user-main">
             <div className="user-graphs">
-              <RechartsActivity />
+              <RechartsActivity key={`activity-${userId}`} userId={userId} />
               <div className="user-subcharts">
                 <div className="user-chart">
-                  <RechartsAverageSessions />
+                  <RechartsAverageSessions
+                    key={`avg-${userId}`}
+                    userId={userId}
+                  />
                 </div>
                 <div className="user-chart">
-                  <RechartsPerformance />
+                  <RechartsPerformance key={`perf-${userId}`} userId={userId} />
                 </div>
                 <div className="user-chart">
-                  <RechartsScore />
+                  <RechartsScore key={`score-${userId}`} userId={userId} />
                 </div>
               </div>
             </div>

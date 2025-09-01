@@ -10,17 +10,15 @@ import {
 import UserPerformanceService from "../services/userPerformanceService";
 import "./RechartsPerformance.css";
 
-export default function RechartsPerformance() {
+export default function RechartsPerformance({ userId }) {
   const [performanceData, setPerformanceData] = useState(null);
 
   useEffect(() => {
-    const userPerformanceService1 = new UserPerformanceService(
-      import.meta.env.VITE_USER_ID
-    );
+    const userPerformanceService1 = new UserPerformanceService(userId);
     userPerformanceService1.getData().then((performanceData_) => {
       setPerformanceData(performanceData_);
     });
-  }, []);
+  }, [userId]);
 
   return (
     <>
