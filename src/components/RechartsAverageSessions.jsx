@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import {
   Line,
@@ -91,3 +92,8 @@ export default function RechartsAverageSessions({ userId }) {
     </>
   );
 }
+
+// Schéma des props
+RechartsAverageSessions.propTypes = {
+  userId: PropTypes.number.isRequired,
+};

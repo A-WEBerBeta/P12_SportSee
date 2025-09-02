@@ -10,6 +10,7 @@ import {
 import UserActivityService from "../services/userActivityService";
 import CustomTooltipActivity from "./CustomTooltipActivity.jsx";
 
+import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import "./RechartsActivity.css";
 
@@ -101,3 +102,8 @@ export default function RechartsActivity({ userId }) {
     </>
   );
 }
+
+// Schéma des props
+RechartsActivity.propTypes = {
+  userId: PropTypes.number.isRequired,
+};

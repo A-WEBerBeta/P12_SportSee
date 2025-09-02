@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import "./CustomTooltipActivity.css";
 
 export default function CustomTooltipActivity({ active, payload }) {
@@ -15,3 +16,18 @@ export default function CustomTooltipActivity({ active, payload }) {
 
   return null;
 }
+
+// Schéma des props
+CustomTooltipActivity.propTypes = {
+  active: PropTypes.bool,
+  payload: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.number,
+      dataKey: PropTypes.string,
+      payload: PropTypes.shape({
+        kilogram: PropTypes.number,
+        calories: PropTypes.number,
+      }),
+    })
+  ),
+};

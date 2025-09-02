@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import "./StatCard.css";
 
 export default function StatCard({ icon, label, value, unit }) {
@@ -16,3 +17,11 @@ export default function StatCard({ icon, label, value, unit }) {
     </div>
   );
 }
+
+// Schéma des props
+StatCard.propTypes = {
+  icon: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  value: PropTypes.number.isRequired,
+  unit: PropTypes.string.isRequired,
+};

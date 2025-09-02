@@ -5,6 +5,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import UserScoreService from "../services/userScoreService";
 import "./RechartsScore.css";
@@ -61,3 +62,8 @@ export default function RechartsScore({ userId }) {
     </>
   );
 }
+
+// Schéma des props
+RechartsScore.propTypes = {
+  userId: PropTypes.number.isRequired,
+};

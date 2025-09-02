@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import {
   PolarAngleAxis,
@@ -59,3 +60,8 @@ export default function RechartsPerformance({ userId }) {
     </>
   );
 }
+
+// Schéma des props
+RechartsPerformance.propTypes = {
+  userId: PropTypes.number.isRequired,
+};

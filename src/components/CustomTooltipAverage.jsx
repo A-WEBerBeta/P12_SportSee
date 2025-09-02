@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import "./CustomTooltipAverage.css";
 
 export default function CustomTooltipAverage({ active, payload }) {
@@ -7,3 +8,18 @@ export default function CustomTooltipAverage({ active, payload }) {
 
   return null;
 }
+
+// Schéma des props
+CustomTooltipAverage.propTypes = {
+  active: PropTypes.bool,
+  payload: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.number,
+      dataKey: PropTypes.string,
+      payload: PropTypes.shape({
+        day: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        sessionLength: PropTypes.number,
+      }),
+    })
+  ),
+};
