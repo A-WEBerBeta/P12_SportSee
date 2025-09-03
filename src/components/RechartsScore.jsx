@@ -1,3 +1,23 @@
+/**
+ * RadialBarChart : Score utilisateur 0..100%
+ *
+ * Datas :
+ * - Récupérées via UserScoreService (mock ou API selon VITE_IS_PROD).
+ * - Le service renvoie un tableau d'un seul slice : [{ name: "score", value: percent, fill? }] où 'percent' [0, 100].
+ *
+ * Comportement :
+ * - Refetch auto quand 'userId' change.
+ * - Domaine angulaire explicite [0, 100] via PolarAngleAxis pour que 30 -> 30% exact du cercle.
+ * - Fond blanc au centre rendu via le conteneur '.score-center' (CSS).
+ */
+
+/** @typedef {{ name: string, value: number, fill?: string }} ScoreSlice */
+
+/**
+ * @param {{ userId: number }} props - Identifiant utilisateur (route /user/:id).
+ * @returns {JSX.Element}
+ */
+
 import {
   PolarAngleAxis,
   RadialBar,
@@ -14,12 +34,15 @@ export default function RechartsScore({ userId }) {
   const [scoreData, setScoreData] = useState(null);
 
   useEffect(() => {
+    // Refetch à chaque changement d'utilisateur
+    // Le service gère lui-même mock vs API via VITE_IS_PROD
     const userScoreService1 = new UserScoreService(userId);
     userScoreService1.getData().then((scoreData_) => {
       setScoreData(scoreData_);
     });
-  }, [userId]);
+  }, [userId]); // <-- Ne pas enlever : sinon les charts ne suitent pas l'URL
 
+  // Valeur en % affichée au centre (sécurisée si data absente)
   const percent = scoreData?.[0]?.value ?? 0;
 
   return (
@@ -32,14 +55,17 @@ export default function RechartsScore({ userId }) {
             <RadialBarChart
               cx="50%"
               cy="50%"
-              innerRadius="65%"
-              outerRadius="80%"
+              innerRadius="65%" // diam "trou" central
+              outerRadius="80%" // épaisseur de l'anneau
               barSize={10}
               startAngle={90}
               endAngle={450}
               data={scoreData}
             >
+              {/* Domaine explicite 0..100 pour un slice fidèle au pourcentage */}
               <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
+
+              {/* Une seule entrée : le score. Le fond gris du "reste" est gérée par 'background' */}
               <RadialBar
                 background={{ fill: "#FBFBFB" }}
                 dataKey="value"
@@ -57,6 +83,7 @@ export default function RechartsScore({ userId }) {
           </div>
         </div>
       ) : (
+        // TODO : remplacer par un loader si besoin
         <p>Loading...</p>
       )}
     </>

@@ -1,3 +1,21 @@
+/**
+ * Card statique avec icône, valeur et unité.
+ *
+ * Accessibilité :
+ * - L'attribut 'alt' de l'image reprend 'label' (lisible par les lecteurs d'écran).
+ *
+ * Formatage :
+ * - 'toLocaleString("en-US")' formate la valeur selon l'anglais US (ex: 1,950).
+ *
+ * @param {{
+ *  icon: string,
+ *  label: string,
+ *  value: number,
+ *  unit: string
+ * }} props
+ * @returns {JSX.Element}
+ */
+
 import PropTypes from "prop-types";
 import "./StatCard.css";
 

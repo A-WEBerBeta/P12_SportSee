@@ -1,3 +1,25 @@
+/**
+ * LineChart : Durée moyenne des sessions (minutes)
+ *
+ * Sources des datas :
+ * - via UserAverageSessionsService (toggle mockes/API selon VITE_IS_PROD)
+ *
+ * Comportement :
+ * - Refetch automatique quand 'userId' change (dépendances de l'effet).
+ * - Axe X : jours 1..7 convertis en L/M/M/J/V/S/D (FR).
+ * - Tooltip custom (affiche "x min") et cursor custom semi-transparent, largeur fixe pour coller à la maquette.
+ * - Dégradé de ligne (plus clair à gauche, plus opaque à droite).
+ *
+ * Notes :
+ * - 'ResponsiveContainer' gère la taille; les props 'width'/'height' du LineChart sont ignorées.
+ * - 'YAxis' caché (hide = true) avec un domaine élargi
+ */
+
+/**
+ * @param {{ userId: number }} props - Identifiant utilisateur (route /user/:id).
+ * @returns {JSX.Element}
+ */
+
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import {
@@ -17,11 +39,13 @@ export default function RechartsAverageSessions({ userId }) {
   const [averageSessionsData, setAverageSessionsData] = useState(null);
 
   useEffect(() => {
+    // Refetch à chaque changement d'utilisateur
+    // Le service gère lui-même mock vs API via VITE_IS_PROD
     const userAverageSessionsService1 = new UserAverageSessionsService(userId);
     userAverageSessionsService1.getData().then((averageSessionsData_) => {
       setAverageSessionsData(averageSessionsData_);
     });
-  }, [userId]);
+  }, [userId]); // <-- Ne pas enlever : sinon les charts ne suitent pas l'URL
 
   return (
     <>
@@ -46,6 +70,7 @@ export default function RechartsAverageSessions({ userId }) {
                 tickLine={false}
                 tick={{ fill: "#FFFFFF", opacity: 0.5, fontSize: 12 }}
                 tickMargin={18}
+                // Map 1..7 -> L M M J V S D (FR)
                 tickFormatter={(day) => {
                   const labels = {
                     1: "L",
@@ -59,11 +84,19 @@ export default function RechartsAverageSessions({ userId }) {
                   return labels[day] || "";
                 }}
               />
+
+              {/* Y caché : domaine élargi pour lisibilité (+- 10min)  */}
               <YAxis hide={true} domain={["dataMin - 10", "dataMax + 10"]} />
+
+              {/* Tooltip :
+                - contenu minimaliste (x min)
+                - curseur overlay custom (largeur fixe / alignement maquette) */}
               <Tooltip
                 content={<CustomTooltipAverage />}
                 cursor={<CustomCursorAverage height={263} width={79} />}
               />
+
+              {/* Dégradé horizontal de la ligne  */}
               <defs>
                 <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="rgba(255,255,255,0.3)" />
@@ -87,6 +120,7 @@ export default function RechartsAverageSessions({ userId }) {
           </ResponsiveContainer>
         </div>
       ) : (
+        // TODO : remplacer par un loader si besoin
         <p>Loading...</p>
       )}
     </>
