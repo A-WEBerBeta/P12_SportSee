@@ -4,7 +4,7 @@
   align-items: center;
   background-color: #020203;
   width: 117px;
-  /* height: calc(100vh - 91px); */
+  height: calc(100vh - 91px);
   color: white;
   padding: 60px 0;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
