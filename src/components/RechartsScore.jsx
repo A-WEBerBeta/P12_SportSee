@@ -7,7 +7,7 @@
  *
  * Comportement :
  * - Refetch auto quand 'userId' change.
- * - Domaine angulaire explicite [0, 100] via PolarAngleAxis pour que 30 -> 30% exact du cercle.
+ * - Domaine angulaire explicite [0, 100] via PolarAngleAxis pour que 30 -> 30% du cercle.
  * - Fond blanc au centre rendu via le conteneur '.score-center' (CSS).
  */
 
@@ -36,8 +36,8 @@ export default function RechartsScore({ userId }) {
   useEffect(() => {
     // Refetch à chaque changement d'utilisateur
     // Le service gère lui-même mock vs API via VITE_IS_PROD
-    const userScoreService1 = new UserScoreService(userId);
-    userScoreService1.getData().then((scoreData_) => {
+    const userScoreService = new UserScoreService(userId);
+    userScoreService.getData().then((scoreData_) => {
       setScoreData(scoreData_);
     });
   }, [userId]); // <-- Ne pas enlever : sinon les charts ne suitent pas l'URL

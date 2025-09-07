@@ -41,8 +41,8 @@ export default function RechartsAverageSessions({ userId }) {
   useEffect(() => {
     // Refetch à chaque changement d'utilisateur
     // Le service gère lui-même mock vs API via VITE_IS_PROD
-    const userAverageSessionsService1 = new UserAverageSessionsService(userId);
-    userAverageSessionsService1.getData().then((averageSessionsData_) => {
+    const userAverageSessionsService = new UserAverageSessionsService(userId);
+    userAverageSessionsService.getData().then((averageSessionsData_) => {
       setAverageSessionsData(averageSessionsData_);
     });
   }, [userId]); // <-- Ne pas enlever : sinon les charts ne suitent pas l'URL

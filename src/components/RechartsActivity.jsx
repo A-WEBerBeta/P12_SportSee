@@ -37,8 +37,8 @@ export default function RechartsActivity({ userId }) {
   useEffect(() => {
     // Refetch à chaque changement d'utilisateur
     // Le service gère lui-même mock vs API via VITE_IS_PROD
-    const userActivityService1 = new UserActivityService(userId);
-    userActivityService1.getData().then((activityData_) => {
+    const userActivityService = new UserActivityService(userId);
+    userActivityService.getData().then((activityData_) => {
       setActivityData(activityData_);
     });
   }, [userId]); // <-- Ne pas enlever : sinon les charts ne suitent pas l'URL

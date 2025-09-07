@@ -1,8 +1,21 @@
-import { useParams } from "react-router-dom";
-import CaloriesIcon from "../assets/calories-icon.svg";
-import CarbsIcon from "../assets/carbs-icon.svg";
-import FatIcon from "../assets/fat-icon.svg";
-import ProteinIcon from "../assets/protein-icon.svg";
+/**
+ * Page utilisateur : /user/:id
+ *
+ * Rôle :
+ * - Récupère les infos utilisateur (prénom + keyData) via userScoreService.
+ * - Construit les 4 cartes stats à partir de 'keyData' avec 'makeStatItems(...)'.
+ * - Affiche les 4 graphiques Recharts (activité, sessions moyennes, performance, score).
+ *
+ * Données :
+ * - La source (mocks ou API) est gérée par les services selon 'VITE_IS_PROD'.
+ * - L'Id utilisateur provient de 'VITE_USER_ID' (env Vite).
+ *
+ * Remontées d'état :
+ * - 'firstName' pour le header.
+ * - 'statCardsDatas' (liste déjà prête pour <StatCard />).
+ */
+
+import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import RechartsActivity from "../components/RechartsActivity";
 import RechartsAverageSessions from "../components/RechartsAverageSessions";
@@ -10,45 +23,31 @@ import RechartsPerformance from "../components/RechartsPerformance";
 import RechartsScore from "../components/RechartsScore";
 import Sidebar from "../components/Sidebar";
 import StatCard from "../components/StatCard";
-import userMainData from "../mocks/userMock";
-import "./User.css";
+import UserScoreService from "../services/userScoreService";
+import { makeStatItems } from "../utils/statCards";
+import "./Dashboard.css";
 
 export default function User() {
-  const { id } = useParams();
+  // Id lu depuis les variables d'environnement Vite
+  const id = import.meta.env.VITE_USER_ID;
   const userId = Number(id);
-  const user = userMainData.find((user) => user.id == id) ?? null;
 
-  if (!user) {
-    return <p>Utilisateur introuvable</p>;
-  }
+  // Liste d'items prêts pour <StatCard /> (icon/label/value/unit)
+  const [statCardsDatas, setStatCardsDatas] = useState([]);
+  // Prénom affiché dans le header
+  const [firstName, setFirstName] = useState("");
 
-  const { firstName } = user.userInfos;
-  const statCardsDatas = [
-    {
-      icon: CaloriesIcon,
-      label: "Calories",
-      value: user.keyData.calorieCount,
-      unit: "kCal",
-    },
-    {
-      icon: ProteinIcon,
-      label: "Protéines",
-      value: user.keyData.proteinCount,
-      unit: "g",
-    },
-    {
-      icon: CarbsIcon,
-      label: "Glucides",
-      value: user.keyData.carbohydrateCount,
-      unit: "g",
-    },
-    {
-      icon: FatIcon,
-      label: "Lipides",
-      value: user.keyData.lipidCount,
-      unit: "g",
-    },
-  ];
+  useEffect(() => {
+    // À chaque changement d'utilisateur, on refetch les infos "profil"
+    // NOTE : getData(false) => renvoie la donnée BRUTE (API: data.data ; mocks: l'objet)
+    const userScoreService = new UserScoreService(userId);
+    userScoreService.getData(false).then((user) => {
+      // Transforme user.keyData -> 4 items prêts pour <StatCard />
+      setStatCardsDatas(makeStatItems(user.keyData));
+      // Prénom pour l'accueil
+      setFirstName(user.userInfos.firstName);
+    });
+  }, [userId]); // Met à jour la page quand l'Id change
 
   return (
     <div>

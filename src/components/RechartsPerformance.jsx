@@ -35,8 +35,8 @@ export default function RechartsPerformance({ userId }) {
   useEffect(() => {
     // Refetch à chaque changement d'utilisateur
     // Le service gère lui-même mock vs API via VITE_IS_PROD
-    const userPerformanceService1 = new UserPerformanceService(userId);
-    userPerformanceService1.getData().then((performanceData_) => {
+    const userPerformanceService = new UserPerformanceService(userId);
+    userPerformanceService.getData().then((performanceData_) => {
       setPerformanceData(performanceData_);
     });
   }, [userId]); // <-- Ne pas enlever : sinon les charts ne suitent pas l'URL

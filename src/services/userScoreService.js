@@ -15,6 +15,7 @@ class UserScoreService {
   /**
    * @param {number} userId - Identifiant utilisateur (depuis /user/:id).
    */
+
   constructor(userId) {
     /** @type {boolean} true => API ; false => mocks */
     this.isProd = import.meta.env.VITE_IS_PROD;
@@ -24,10 +25,14 @@ class UserScoreService {
 
   /**
    * Récupère le score (API ou mocks) puis le formate en slice pour le chart.
-   * @returns {Promise<ScoreSlice[]>}
+   * - Si 'shouldFormatData' est true (par défaut), renvoie les données formatées pour le chart.
+   * - Sinon, renvoie la donnée "brute" de la source (API: 'data.data', mocks: l'objet mock).
+   *
+   * @param {boolean} [shouldFormatData=true] - Formater les données pour le chart ou non.
+   * @returns {Promise<ScoreSlice[] | any>} Données formatées (par défaut) ou brutes si shouldFormatData=false.
    */
 
-  async getData() {
+  async getData(shouldFormatData = true) {
     let data;
 
     if (this.isProd) {
@@ -37,7 +42,14 @@ class UserScoreService {
     } else {
       data = userMainData.find((user) => user.id == this.userId);
     }
-    return this.formatter(data);
+
+    // Selon le besoin, on renvoit le format chart (par défaut) ou la donnée brute normalisée.
+    if (shouldFormatData) {
+      return this.formatter(data);
+    } else {
+      // En API, la donnée utile est dans 'data.data' ; en mocks, c'est l'objet tel quel.
+      return this.isProd ? data.data : data;
+    }
   }
 
   /**
@@ -47,6 +59,7 @@ class UserScoreService {
    * @param {{ data?: any }|any} data - Payload brut (API ou mocks)
    * @returns {ScoreSlice[]} Tableau avec un seul slice {name, value (0..100), fill}
    */
+
   formatter(data) {
     // API -> data.data ; Mocks -> data
     const base = this.isProd ? data.data : data;
