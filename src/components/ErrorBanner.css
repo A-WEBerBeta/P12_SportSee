@@ -1,0 +1,10 @@
+.chart-error {
+  margin: 8px 0 12px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #FFFFFF;  
+  color: #e60000;       
+  border: 1px solid #fecaca;
+  font-size: 14px;
+  line-height: 1.4;
+}

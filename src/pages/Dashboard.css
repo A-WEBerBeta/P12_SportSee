@@ -39,6 +39,10 @@
   gap: 30px;
 }
 
+.user-graphs :focus:not(:focus-visible) {
+  outline: none;
+}
+
 .user-stats {
   flex: 1;
   display: flex;

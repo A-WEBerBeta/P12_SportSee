@@ -20,7 +20,8 @@ class UserActivityService {
    */
   constructor(userId) {
     /** @type {boolean} - true -> API ; false -> mocks */
-    this.isProd = import.meta.env.VITE_IS_PROD;
+    const raw = import.meta.env.VITE_IS_PROD;
+    this.isProd = raw === true || raw === "true";
     /** @type {number} */
     this.userId = userId;
   }
@@ -65,8 +66,8 @@ class UserActivityService {
         day: index + 1,
       }));
     } else {
-      // Mocks -> la structure est utilisable par le chart
-      return data;
+      // Mocks -> l'objet a la forme { userId, sessions: [...] }
+      return data?.sessions ?? [];
     }
   }
 }

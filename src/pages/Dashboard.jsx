@@ -16,6 +16,7 @@
  */
 
 import { useEffect, useState } from "react";
+import ErrorBanner from "../components/ErrorBanner";
 import Header from "../components/Header";
 import RechartsActivity from "../components/RechartsActivity";
 import RechartsAverageSessions from "../components/RechartsAverageSessions";
@@ -24,6 +25,7 @@ import RechartsScore from "../components/RechartsScore";
 import Sidebar from "../components/Sidebar";
 import StatCard from "../components/StatCard";
 import UserScoreService from "../services/userScoreService";
+import { checkKeyData } from "../utils/checks";
 import { makeStatItems } from "../utils/statCards";
 import "./Dashboard.css";
 
@@ -36,17 +38,31 @@ export default function User() {
   const [statCardsDatas, setStatCardsDatas] = useState([]);
   // Prénom affiché dans le header
   const [firstName, setFirstName] = useState("");
+  const [statsError, setStatsError] = useState("");
 
   useEffect(() => {
     // À chaque changement d'utilisateur, on refetch les infos "profil"
     // NOTE : getData(false) => renvoie la donnée BRUTE (API: data.data ; mocks: l'objet)
     const userScoreService = new UserScoreService(userId);
-    userScoreService.getData(false).then((user) => {
-      // Transforme user.keyData -> 4 items prêts pour <StatCard />
-      setStatCardsDatas(makeStatItems(user.keyData));
-      // Prénom pour l'accueil
-      setFirstName(user.userInfos.firstName);
-    });
+    userScoreService
+      .getData(false)
+      .then((user) => {
+        const msg = checkKeyData(user?.keyData);
+        if (msg) {
+          setStatsError(msg);
+          setStatCardsDatas([]);
+          return;
+        } else {
+          setStatsError("");
+          // Transforme user.keyData -> 4 items prêts pour <StatCard />
+          setStatCardsDatas(makeStatItems(user.keyData));
+          // Prénom pour l'accueil
+          setFirstName(user.userInfos.firstName);
+        }
+      })
+      .catch(() =>
+        setStatsError("Statistiques : impossible de récupérer les données.")
+      );
   }, [userId]); // Met à jour la page quand l'Id change
 
   return (
@@ -79,6 +95,7 @@ export default function User() {
               </div>
             </div>
             <div className="user-stats">
+              {statsError && <ErrorBanner message={statsError} />}
               {statCardsDatas.map((item, index) => (
                 <StatCard
                   key={index}

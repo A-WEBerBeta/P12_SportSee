@@ -28,18 +28,32 @@ import {
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import UserScoreService from "../services/userScoreService";
+import { checkScore } from "../utils/checks";
+import ErrorBanner from "./ErrorBanner";
 import "./RechartsScore.css";
 
 export default function RechartsScore({ userId }) {
   const [scoreData, setScoreData] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     // Refetch à chaque changement d'utilisateur
     // Le service gère lui-même mock vs API via VITE_IS_PROD
     const userScoreService = new UserScoreService(userId);
-    userScoreService.getData().then((scoreData_) => {
-      setScoreData(scoreData_);
-    });
+    userScoreService
+      .getData()
+      .then((scoreData_) => {
+        const msg = checkScore(scoreData_);
+        if (msg) {
+          setError(msg);
+          setScoreData(null);
+          return;
+        } else {
+          setError("");
+          setScoreData(scoreData_);
+        }
+      })
+      .catch(() => setError("Score : impossible de récupérer les données."));
   }, [userId]); // <-- Ne pas enlever : sinon les charts ne suitent pas l'URL
 
   // Valeur en % affichée au centre (sécurisée si data absente)
@@ -47,6 +61,7 @@ export default function RechartsScore({ userId }) {
 
   return (
     <>
+      {error && <ErrorBanner message={error} />}
       {scoreData ? (
         <div className="score-chart-container">
           <h2 className="score-title">Score</h2>

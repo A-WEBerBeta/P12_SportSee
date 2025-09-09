@@ -15,7 +15,8 @@ class UserAverageSessionsService {
    */
   constructor(userId) {
     /** @type {boolean} true -> API ; false -> mocks */
-    this.isProd = import.meta.env.VITE_IS_PROD;
+    const raw = import.meta.env.VITE_IS_PROD;
+    this.isProd = raw === true || raw === "true";
     /** @type {number} */
     this.userId = userId;
   }

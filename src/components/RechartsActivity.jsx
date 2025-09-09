@@ -24,27 +24,46 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import UserActivityService from "../services/userActivityService";
+import UserActivityService from "../services/userActivityService.js";
 import CustomTooltipActivity from "./CustomTooltipActivity.jsx";
 
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
+import { checkArrayFirstRowKeys } from "../utils/checks.js";
+import ErrorBanner from "./ErrorBanner.jsx";
 import "./RechartsActivity.css";
 
 export default function RechartsActivity({ userId }) {
   const [activityData, setActivityData] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     // Refetch à chaque changement d'utilisateur
     // Le service gère lui-même mock vs API via VITE_IS_PROD
     const userActivityService = new UserActivityService(userId);
-    userActivityService.getData().then((activityData_) => {
-      setActivityData(activityData_);
-    });
+    userActivityService
+      .getData()
+      .then((activityData_) => {
+        const msg = checkArrayFirstRowKeys(
+          activityData_,
+          ["day", "kilogram", "calories"],
+          "Activité"
+        );
+        if (msg) {
+          setError(msg);
+          setActivityData(null);
+          return;
+        } else {
+          setError("");
+          setActivityData(activityData_);
+        }
+      })
+      .catch(() => setError("Activité : impossible de récupérer les données."));
   }, [userId]); // <-- Ne pas enlever : sinon les charts ne suitent pas l'URL
 
   return (
     <>
+      {error && <ErrorBanner message={error} />}
       {activityData ? (
         <div className="activity-chart-container">
           <div className="activity-header">

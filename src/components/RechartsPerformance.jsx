@@ -27,22 +27,41 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import UserPerformanceService from "../services/userPerformanceService";
+import { checkArrayFirstRowKeys } from "../utils/checks";
+import ErrorBanner from "./ErrorBanner";
 import "./RechartsPerformance.css";
 
 export default function RechartsPerformance({ userId }) {
   const [performanceData, setPerformanceData] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     // Refetch à chaque changement d'utilisateur
     // Le service gère lui-même mock vs API via VITE_IS_PROD
     const userPerformanceService = new UserPerformanceService(userId);
-    userPerformanceService.getData().then((performanceData_) => {
-      setPerformanceData(performanceData_);
-    });
+    userPerformanceService
+      .getData()
+      .then((performanceData_) => {
+        const msg = checkArrayFirstRowKeys(
+          performanceData_,
+          ["subject", "value"],
+          "Performance"
+        );
+        if (msg) {
+          setError(msg);
+          setPerformanceData(null);
+          return;
+        }
+        setPerformanceData(performanceData_);
+      })
+      .catch(() =>
+        setError("Performance : impossible de récupérer les données.")
+      );
   }, [userId]); // <-- Ne pas enlever : sinon les charts ne suitent pas l'URL
 
   return (
     <>
+      {error && <ErrorBanner message={error} />}
       {performanceData ? (
         <div className="performance-chart-container">
           <ResponsiveContainer width="100%" height="100%">

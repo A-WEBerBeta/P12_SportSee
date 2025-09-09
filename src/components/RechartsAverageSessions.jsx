@@ -31,24 +31,45 @@ import {
   YAxis,
 } from "recharts";
 import UserAverageSessionsService from "../services/userAverageSessionsService.js";
+import { checkArrayFirstRowKeys } from "../utils/checks.js";
 import CustomCursorAverage from "./CustomCursorAverage.jsx";
 import CustomTooltipAverage from "./CustomTooltipAverage.jsx";
+import ErrorBanner from "./ErrorBanner.jsx";
 import "./RechartsAverageSessions.css";
 
 export default function RechartsAverageSessions({ userId }) {
   const [averageSessionsData, setAverageSessionsData] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     // Refetch à chaque changement d'utilisateur
     // Le service gère lui-même mock vs API via VITE_IS_PROD
     const userAverageSessionsService = new UserAverageSessionsService(userId);
-    userAverageSessionsService.getData().then((averageSessionsData_) => {
-      setAverageSessionsData(averageSessionsData_);
-    });
+    userAverageSessionsService
+      .getData()
+      .then((averageSessionsData_) => {
+        const msg = checkArrayFirstRowKeys(
+          averageSessionsData_,
+          ["day", "sessionLength"],
+          "Sessions moyennes"
+        );
+        if (msg) {
+          setError(msg);
+          setAverageSessionsData(null);
+          return;
+        } else {
+          setError("");
+          setAverageSessionsData(averageSessionsData_);
+        }
+      })
+      .catch(() =>
+        setError("Sessions moyennes : impossible de récupérer les données.")
+      );
   }, [userId]); // <-- Ne pas enlever : sinon les charts ne suitent pas l'URL
 
   return (
     <>
+      {error && <ErrorBanner message={error} />}
       {averageSessionsData ? (
         <div className="session-chart-container">
           <h2 className="session-title">Durée moyenne des sessions</h2>
