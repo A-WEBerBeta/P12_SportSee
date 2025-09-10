@@ -15,9 +15,9 @@ import userActivityMock from "../mocks/userActivityMock";
 
 class UserActivityService {
   /**
-   *
    * @param {number} userId - Identifiant utilisateur (provenant de /user/:id).
    */
+
   constructor(userId) {
     /** @type {boolean} - true -> API ; false -> mocks */
     const raw = import.meta.env.VITE_IS_PROD;
@@ -59,16 +59,14 @@ class UserActivityService {
    */
 
   formatter(data) {
-    if (this.isProd) {
-      // API -> on mappe les sessions et on force day = 1..N pour l'axe X
-      return data.data.sessions.map((session, index) => ({
-        ...session,
-        day: index + 1,
-      }));
-    } else {
-      // Mocks -> l'objet a la forme { userId, sessions: [...] }
-      return data?.sessions ?? [];
-    }
+    // On récupère le bon tableau de sessions selon la source (mocks ou API)
+    const sessions = this.isProd ? data?.data?.sessions : data?.sessions;
+
+    // On normalise : day = index 1..N quelle que soit la source
+    return (sessions ?? []).map((session, index) => ({
+      ...session,
+      day: index + 1,
+    }));
   }
 }
 

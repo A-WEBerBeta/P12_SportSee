@@ -39,11 +39,14 @@ export default function User() {
   // Prénom affiché dans le header
   const [firstName, setFirstName] = useState("");
   const [statsError, setStatsError] = useState("");
+  const [userError, setUserError] = useState("");
 
   useEffect(() => {
     // À chaque changement d'utilisateur, on refetch les infos "profil"
     // NOTE : getData(false) => renvoie la donnée BRUTE (API: data.data ; mocks: l'objet)
     const userScoreService = new UserScoreService(userId);
+    setUserError("");
+
     userScoreService
       .getData(false)
       .then((user) => {
@@ -60,9 +63,12 @@ export default function User() {
           setFirstName(user.userInfos.firstName);
         }
       })
-      .catch(() =>
-        setStatsError("Statistiques : impossible de récupérer les données.")
-      );
+      .catch(() => {
+        setUserError("Utilisateur introuvable.");
+        setStatsError("");
+        setStatCardsDatas([]);
+        setFirstName("");
+      });
   }, [userId]); // Met à jour la page quand l'Id change
 
   return (
@@ -70,43 +76,55 @@ export default function User() {
       <Header />
       <div className="user-layout">
         <Sidebar />
-        <main className="user-content">
-          <h1>
-            Bonjour <span className="user-name">{firstName}</span>
-          </h1>
-          <p>Félicitations ! Vous avez explosé vos objectifs hier 👏</p>
+        <main className="user-content" key={userId}>
+          {userError ? (
+            <ErrorBanner message={`${userError} (ID: ${userId})`} />
+          ) : (
+            <>
+              <h1>
+                Bonjour <span className="user-name">{firstName}</span>
+              </h1>
+              <p>Félicitations ! Vous avez explosé vos objectifs hier 👏</p>
 
-          <div className="user-main">
-            <div className="user-graphs">
-              <RechartsActivity key={`activity-${userId}`} userId={userId} />
-              <div className="user-subcharts">
-                <div className="user-chart">
-                  <RechartsAverageSessions
-                    key={`avg-${userId}`}
+              <div className="user-main">
+                <div className="user-graphs">
+                  <RechartsActivity
+                    key={`activity-${userId}`}
                     userId={userId}
                   />
+                  <div className="user-subcharts">
+                    <div className="user-chart">
+                      <RechartsAverageSessions
+                        key={`avg-${userId}`}
+                        userId={userId}
+                      />
+                    </div>
+                    <div className="user-chart">
+                      <RechartsPerformance
+                        key={`perf-${userId}`}
+                        userId={userId}
+                      />
+                    </div>
+                    <div className="user-chart">
+                      <RechartsScore key={`score-${userId}`} userId={userId} />
+                    </div>
+                  </div>
                 </div>
-                <div className="user-chart">
-                  <RechartsPerformance key={`perf-${userId}`} userId={userId} />
-                </div>
-                <div className="user-chart">
-                  <RechartsScore key={`score-${userId}`} userId={userId} />
+                <div className="user-stats">
+                  {statsError && <ErrorBanner message={statsError} />}
+                  {statCardsDatas.map((item, index) => (
+                    <StatCard
+                      key={index}
+                      icon={item.icon}
+                      label={item.label}
+                      value={item.value}
+                      unit={item.unit}
+                    />
+                  ))}
                 </div>
               </div>
-            </div>
-            <div className="user-stats">
-              {statsError && <ErrorBanner message={statsError} />}
-              {statCardsDatas.map((item, index) => (
-                <StatCard
-                  key={index}
-                  icon={item.icon}
-                  label={item.label}
-                  value={item.value}
-                  unit={item.unit}
-                />
-              ))}
-            </div>
-          </div>
+            </>
+          )}
         </main>
       </div>
     </div>

@@ -39,9 +39,12 @@ class UserScoreService {
     if (this.isProd) {
       // API locale du projet OC (endpoint root /user/:id)
       const response = await fetch(`http://localhost:3000/user/${this.userId}`);
+      if (!response.ok) throw new Error("Utilisateur introuvable.");
       data = await response.json();
     } else {
-      data = userMainData.find((user) => user.id == this.userId);
+      const found = userMainData.find((user) => user.id == this.userId);
+      if (!found) throw new Error("Utilisateur introuvable.");
+      data = found;
     }
 
     // Selon le besoin, on renvoit le format chart (par défaut) ou la donnée brute normalisée.
