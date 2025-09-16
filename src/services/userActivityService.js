@@ -20,8 +20,7 @@ class UserActivityService {
 
   constructor(userId) {
     /** @type {boolean} - true -> API ; false -> mocks */
-    const raw = import.meta.env.VITE_IS_PROD;
-    this.isProd = raw === true || raw === "true";
+    this.isProd = String(import.meta.env.VITE_IS_PROD).toLowerCase() === "true";
     /** @type {number} */
     this.userId = userId;
   }
